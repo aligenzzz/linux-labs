@@ -1,6 +1,7 @@
 #!/bin/bash
 
 elements=( '·' $'\e[1;32m1\e[0m' $'\e[1;33m2\e[0m' $'\e[1;34m3\e[0m' $'\e[1;35m4\e[0m' $'\e[1;36m5\e[0m' $'\e[1;36m6\e[0m' $'\e[1;36m7\e[0m' $'\e[1;36m8\e[0m' '@' $'\e[1;31mf\e[0m' $'\e[1;37m?\e[0m' $'\e[1;31m*\e[0m' )
+fileelements=( '·' '1' '2' '3' '4' '5' '6' '7' '8' '@' 'f' '?' '*' )
 
 function drawboard() 
 {
@@ -20,6 +21,22 @@ function drawboard()
     done
 
     echo -en '\n<a/w/d/s> Move\n<enter> Step\n<f> Flag  <n> New\n<q> Quit'
+}
+
+function makescreenshot 
+{
+    echo "bombs: $bombs   flags: $flags" > result.txt
+
+    echo ' ' >> result.txt
+    for ((i=0;i<size;i++))
+    do
+        for ((j=0;j<size;j++))
+        do
+            echo -en " ${fileelements[board[i*size+j]]}" >> result.txt
+        done
+
+        echo ' ' >> result.txt
+    done
 }
 
 function newgame() 
@@ -75,7 +92,7 @@ function setbombs()
 
             if (( i==0 && j>0 && j<size-1 ))
             then
-                bcount=$(( ((bomb[i*size+size+j]==12))+((bomb[i*size+size+j+1]==12))+((bomb[i*size+j+1]==12))+((bomb[i*size+j-1]==12))+((bomb[i*size-size+j-1]==12)) ))
+                bcount=$(( ((bomb[i*size+size+j]==12))+((bomb[i*size+size+j+1]==12))+((bomb[i*size+j+1]==12))+((bomb[i*size+j-1]==12))+((bomb[i*size+size+j-1]==12)) ))
             fi
 
             if (( j==0 && i>0 && i<size-1 ))
@@ -174,6 +191,8 @@ function opencell()
 
         drawboard
     fi
+
+    makescreenshot
 }
 
 function putflag() 
@@ -205,6 +224,8 @@ function putflag()
     done
 
     if (( was==0 )); then gameover; fi
+
+    makescreenshot
 }
 
 newgame
